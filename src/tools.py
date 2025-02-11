@@ -1,3 +1,4 @@
+import json
 import time
 
 from curl_cffi import requests
@@ -30,7 +31,7 @@ def request_retry(max_retries, api, headers, json_data):
 
 def scraper(keyword_list,ApiOptions):
     timeout_dict = {}
-    for keyword_list_item in keyword_list:
+    for i,keyword_list_item in enumerate(keyword_list):
         print(keyword_list_item)
         item_list = []
         for page in range(300):
@@ -43,12 +44,23 @@ def scraper(keyword_list,ApiOptions):
 
             response = request_retry(3, api, headers, json_data)
             if response is not None:
+                zero_test = []
                 for item in response.json()["content"]:
+                    zero_test.append(item)
                     item_list.append(item)
-                if len(item_list)==0:
+
+                if len(zero_test)==0:
                     print("End of page.")
                     break
             else:
                 timeout_dict.update({'keyword':keyword_list_item,'page':page})
+
+            json_string = json.dumps(item_list)
+            with open( f"item_list_{i}.json", "w",) as f:
+                f.write(json_string)
+
+    json_string_time = json.dumps(timeout_dict)
+    with open( "time_out.json", "w",) as f:
+        f.write(json_string_time)
 
 

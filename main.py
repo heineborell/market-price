@@ -16,7 +16,7 @@ if __name__ == "__main__":
         "Atıştırmalık ve Tatlı",
         "Temizlik ve Kişisel Bakım Ürünleri",
     ]
-    keyword_list = [keyword_list[3],keyword_list[0]]
+    keyword_list = [keyword_list[1]]
     scraper(keyword_list, ApiOptions)
 
 
