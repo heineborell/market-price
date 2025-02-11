@@ -1,5 +1,8 @@
+import time
+
 from curl_cffi import requests
 from curl_cffi.requests.exceptions import Timeout
+from rich import print
 
 
 def get_req(api, headers, json_data):
@@ -24,3 +27,28 @@ def request_retry(max_retries, api, headers, json_data):
             break  # Exit loop on unexpected errors
 
     return response
+
+def scraper(keyword_list,ApiOptions):
+    timeout_dict = {}
+    for keyword_list_item in keyword_list:
+        print(keyword_list_item)
+        item_list = []
+        for page in range(300):
+            print("Scraped page", page)
+            time.sleep(3)
+            api_options = ApiOptions(keyword_list_item,page) 
+            api = api_options.api
+            headers = api_options.headers
+            json_data = api_options.json_data
+
+            response = request_retry(3, api, headers, json_data)
+            if response is not None:
+                for item in response.json()["content"]:
+                    item_list.append(item)
+                if len(item_list)==0:
+                    print("End of page.")
+                    break
+            else:
+                timeout_dict.update({'keyword':keyword_list_item,'page':page})
+
+
