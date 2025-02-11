@@ -17,10 +17,10 @@ def request_retry(max_retries, api, headers, json_data):
             response = get_req(api, headers, json_data)
             break  # Exit loop on success
         except Timeout:
-            print("Timeout while waiting for the page to load. Reloading...")
+            print("[bold yellow] Timeout while waiting for the page to load. Reloading... [/bold yellow]")
             retry_count += 1
             if retry_count >= max_retries:
-                print("Max retries reached. Exiting.")
+                print("[bold red] Max retries reached. Exiting. [/bold red]")
                 response = None  # Handle case where all retries fail
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -35,7 +35,6 @@ def scraper(keyword_list,ApiOptions):
         print(keyword_list_item)
         item_list = []
         for page in range(300):
-            print("Scraped page", page)
             time.sleep(3)
             api_options = ApiOptions(keyword_list_item,page) 
             api = api_options.api
@@ -48,6 +47,7 @@ def scraper(keyword_list,ApiOptions):
                 for item in response.json()["content"]:
                     zero_test.append(item)
                     item_list.append(item)
+                    print("Scraped page", page)
 
                 if len(zero_test)==0:
                     print("End of page.")

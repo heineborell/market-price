@@ -1,10 +1,5 @@
-import time
-
-from curl_cffi.requests import headers
-from rich import print
-
 from api_opt import ApiOptions
-from tools import request_retry, scraper
+from tools import scraper
 
 if __name__ == "__main__":
     keyword_list = [
@@ -16,7 +11,7 @@ if __name__ == "__main__":
         "Atıştırmalık ve Tatlı",
         "Temizlik ve Kişisel Bakım Ürünleri",
     ]
-    keyword_list = [keyword_list[1]]
+    #keyword_list = [keyword_list[1]]
     scraper(keyword_list, ApiOptions)
 
 
