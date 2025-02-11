@@ -1,0 +1,23 @@
+[build-system]
+requires=["setuptools","setuptools-scm"]
+build-backend="setuptools.build_meta"
+
+[project]
+name='grand_tours'
+version="0.1"
+dependencies = [
+    
+certifi==2025.1.31
+cffi==1.17.1
+curl_cffi==0.7.4
+markdown-it-py==3.0.0
+mdurl==0.1.2
+pycparser==2.22
+Pygments==2.19.1
+rich==13.9.4
+typing_extensions==4.12.2
+]
+
+[project.optional-dependencies]
+dev = ["black", "flake8", "isort", "pre-commit"]
+
