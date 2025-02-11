@@ -1,4 +1,6 @@
 from curl_cffi import requests
+from curl_cffi.requests.exceptions import Timeout
+
 from rich import print
 
 headers = {
@@ -20,15 +22,41 @@ headers = {
 }
 
 keyword_list = ['Temel Gıda','Meyve ve Sebze',"Et, Tavuk ve Balık","Süt Ürünleri ve Kahvaltılık","İçecek","Atıştırmalık ve Tatlı","Temizlik ve Kişisel Bakım Ürünleri"]
+
 json_data = {
-    'keywords': 'Temel Gıda',
-    'pages':89,
+    'keywords': f"{keyword_list[0]}",
+    'pages':10,
     'size': 24,
     'menuCategory': True,
 }
 
-response = requests.post('https://api.marketfiyati.org.tr/api/v2/searchByCategories', headers=headers, json=json_data)
+api = 'https://api.marketfiyati.org.tr/api/v2/searchByCategories'
+
+def get_req(api, headers, json_data):
+    return requests.post(api, headers=headers, json=json_data)
 
 
-for item in response.json()['content']:
-    print(item)
+def request_retry(max_retries,api,headers,json_data):
+    retry_count = 0
+    while retry_count < max_retries:
+        try:
+            response = get_req(api, headers, json_data)
+            break  # Exit loop on success
+        except Timeout:
+            print("Timeout while waiting for the page to load. Reloading...")
+            retry_count += 1
+            if retry_count >= max_retries:
+                print("Max retries reached. Exiting.")
+                response = None  # Handle case where all retries fail
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            response = None
+            break  # Exit loop on unexpected errors
+
+    return response
+
+response=request_retry(3,api,headers,json_data)
+if response is not None:
+    for item in response.json()['content']:
+        print(item)
+
