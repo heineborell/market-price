@@ -24,7 +24,7 @@ def request_retry(max_retries, api, headers, json_data):
                 response = None  # Handle case where all retries fail
         except Exception as e:
             print(f"An error occurred: {e}")
-            response = None
+            response = json_data
             break  # Exit loop on unexpected errors
 
     return response
@@ -41,26 +41,28 @@ def scraper(keyword_list,ApiOptions):
             headers = api_options.headers
             json_data = api_options.json_data
 
-            response = request_retry(3, api, headers, json_data)
-            if response is not None:
+            response = request_retry(4, api, headers, json_data)
+            if response is not None and not isinstance(response,dict):
                 zero_test = []
                 for item in response.json()["content"]:
                     zero_test.append(item)
                     item_list.append(item)
-                    print("Scraped page", page)
+
+                print("Scraped page", page)
 
                 if len(zero_test)==0:
                     print("End of page.")
                     break
             else:
                 timeout_dict.update({'keyword':keyword_list_item,'page':page})
+                print(f"[bold red] {keyword_list_item} page {page} added to unscraped list. [/bold red]")
 
             json_string = json.dumps(item_list)
             with open( f"item_list_{i}.json", "w",) as f:
                 f.write(json_string)
 
-    json_string_time = json.dumps(timeout_dict)
-    with open( "time_out.json", "w",) as f:
-        f.write(json_string_time)
+            json_string_time = json.dumps(timeout_dict)
+            with open( "time_out.json", "w",) as f:
+                f.write(json_string_time)
 
 
